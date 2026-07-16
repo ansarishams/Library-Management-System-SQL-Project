@@ -1,5 +1,6 @@
 # 📚 Library Management System — SQL Project
 
+![Liberary Image]()
 ## 📌 Overview
 This project simulates a complete **Library Management System (LMS)** database using **PostgreSQL**, covering everything from schema design and relational integrity (foreign keys) to real-world business operations — CRUD operations, CTAS (Create Table As), stored procedures, and analytical reporting.
 
