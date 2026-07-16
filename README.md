@@ -1,227 +1,155 @@
-# Retail Sales Analysis SQL Project
+# 📚 Library Management System — SQL Project
 
-## Project Overview
+## 📌 Overview
+This project simulates a complete **Library Management System (LMS)** database using **PostgreSQL**, covering everything from schema design and relational integrity (foreign keys) to real-world business operations — CRUD operations, CTAS (Create Table As), stored procedures, and analytical reporting.
 
-**Project Title**: Retail Sales Analysis  
-**Level**: Beginner  
-**Database**: `p1_retail_db`
+The project demonstrates end-to-end database management: designing normalized tables, enforcing relationships, writing operational queries, and generating branch-level performance reports.
 
-This project is designed to demonstrate SQL skills and techniques typically used by data analysts to explore, clean, and analyze retail sales data. The project involves setting up a retail sales database, performing exploratory data analysis (EDA), and answering specific business questions through SQL queries. This project is ideal for those who are starting their journey in data analysis and want to build a solid foundation in SQL.
+---
 
-## Objectives
+## 🎯 Objectives
+- Design a normalized relational schema for a library system with proper foreign key relationships
+- Perform CRUD operations (Create, Read, Update, Delete) on core tables
+- Use CTAS to generate derived summary tables
+- Write a stored procedure to automate the book return process
+- Identify overdue books and members with pending returns
+- Generate branch-wise performance and revenue reports
+- Identify top-performing employees and active members
 
-1. **Set up a retail sales database**: Create and populate a retail sales database with the provided sales data.
-2. **Data Cleaning**: Identify and remove any records with missing or null values.
-3. **Exploratory Data Analysis (EDA)**: Perform basic exploratory data analysis to understand the dataset.
-4. **Business Analysis**: Use SQL to answer specific business questions and derive insights from the sales data.
+---
 
-## Project Structure
+## 🗂️ Dataset & Files
 
-### 1. Database Setup
+| File | Description |
+|---|---|
+| `books.csv` | Book catalog — ISBN, title, category, rental price, status, author, publisher |
+| `branch.csv` | Library branch details — branch ID, manager, address, contact |
+| `employees.csv` | Employee records — ID, name, position, salary, assigned branch |
+| `members.csv` | Library member records — ID, name, address, registration date |
+| `issued_status.csv` | Book issue transactions — who issued what, when, and by which employee |
+| `return_status.csv` | Book return transactions — linked to issued records |
+| `Liberary_Management_Table_prd.sql` | DDL script — table schema creation + foreign key constraints |
+| `Liberary_Management_Analysis_1.sql` | DML/DQL script — all 17 business task queries and procedures |
 
-- **Database Creation**: The project starts by creating a database named `p1_retail_db`.
-- **Table Creation**: A table named `retail_sales` is created to store the sales data. The table structure includes columns for transaction ID, sale date, sale time, customer ID, gender, age, product category, quantity sold, price per unit, cost of goods sold (COGS), and total sale amount.
+---
 
-```sql
-CREATE DATABASE p1_retail_db;
+## 🛠️ Tools & Tech Stack
+- **PostgreSQL** – Database design & querying
+- **SQL Concepts used:** `JOIN` (INNER/LEFT), `GROUP BY` + `HAVING`, `CTAS`, `Stored Procedures (PL/pgSQL)`, `Foreign Key Constraints`, Date arithmetic (`CURRENT_DATE`, `INTERVAL`), Aggregate functions (`SUM`, `COUNT`)
 
-CREATE TABLE retail_sales
-(
-    transactions_id INT PRIMARY KEY,
-    sale_date DATE,	
-    sale_time TIME,
-    customer_id INT,	
-    gender VARCHAR(10),
-    age INT,
-    category VARCHAR(35),
-    quantity INT,
-    price_per_unit FLOAT,	
-    cogs FLOAT,
-    total_sale FLOAT
-);
+---
+
+## 🧱 Database Schema (ERD Logic)
+
+```
+branch (1) ────< employees (many)
+employees (1) ──< issued_status (many)
+members (1) ────< issued_status (many)
+books (1) ──────< issued_status (many)
+issued_status (1) ─< return_status (1)
 ```
 
-### 2. Data Exploration & Cleaning
-
-- **Record Count**: Determine the total number of records in the dataset.
-- **Customer Count**: Find out how many unique customers are in the dataset.
-- **Category Count**: Identify all unique product categories in the dataset.
-- **Null Value Check**: Check for any null values in the dataset and delete records with missing data.
+**Tables:**
 
 ```sql
-SELECT COUNT(*) FROM retail_sales;
-SELECT COUNT(DISTINCT customer_id) FROM retail_sales;
-SELECT DISTINCT category FROM retail_sales;
-
-SELECT * FROM retail_sales
-WHERE 
-    sale_date IS NULL OR sale_time IS NULL OR customer_id IS NULL OR 
-    gender IS NULL OR age IS NULL OR category IS NULL OR 
-    quantity IS NULL OR price_per_unit IS NULL OR cogs IS NULL;
-
-DELETE FROM retail_sales
-WHERE 
-    sale_date IS NULL OR sale_time IS NULL OR customer_id IS NULL OR 
-    gender IS NULL OR age IS NULL OR category IS NULL OR 
-    quantity IS NULL OR price_per_unit IS NULL OR cogs IS NULL;
+branch(branch_id PK, manager_id, branch_address, contact_no)
+employees(emp_id PK, emp_name, position, salary, branch_id FK)
+books(isbn PK, book_title, category, rental_price, status, author, publisher)
+members(member_id PK, member_name, member_address, reg_date)
+issued_status(issued_id PK, issued_member_id FK, issued_book_name, issued_date, issued_book_isbn FK, issued_emp_id FK)
+return_status(return_id PK, issued_id FK, return_book_name, return_date, return_book_isbn)
 ```
 
-### 3. Data Analysis & Findings
+All foreign key relationships are enforced via `ALTER TABLE ... ADD CONSTRAINT` to maintain referential integrity across issued/returned books, members, employees, and branches.
 
-The following SQL queries were developed to answer specific business questions:
+---
 
-1. **Write a SQL query to retrieve all columns for sales made on '2022-11-05**:
+## 🔍 Business Tasks Solved
+
+1. Create a new book record
+2. Update an existing member's address
+3. Delete a record from the issued status table
+4. Retrieve all books issued by a specific employee
+5. List employees who have issued more than one book (`GROUP BY` + `HAVING`)
+6. Create a summary table (CTAS) of each book and its total issue count
+7. Retrieve all books in a specific category
+8. Find total rental income generated by category
+9. List members registered within a given time window
+10. Retrieve employees along with their branch manager's name and branch details (self-join)
+11. Create a table (CTAS) of books priced above a rental threshold
+12. Retrieve the list of books not yet returned (`LEFT JOIN` + `NULL` check)
+13. Identify members with overdue books (30-day return policy) — includes days overdue
+14. **Stored Procedure:** Automate the book return process — inserts into `return_status` and updates book availability in `books`
+15. Generate a branch performance report — books issued, books returned, and total revenue per branch (CTAS)
+16. CTAS: Create a table of active members who issued at least one book in a recent time window
+17. Identify the top employees by number of books processed, along with their branch
+
+---
+
+## ⚙️ Key Feature: Automated Return Procedure
+
+A **PL/pgSQL stored procedure** (`return_book`) automates the return workflow in a single call:
+
 ```sql
-SELECT *
-FROM retail_sales
-WHERE sale_date = '2022-11-05';
+CALL return_book('RS125', 'IS136');
 ```
 
-2. **Write a SQL query to retrieve all transactions where the category is 'Clothing' and the quantity sold is more than 4 in the month of Nov-2022**:
-```sql
-SELECT 
-  *
-FROM retail_sales
-WHERE 
-    category = 'Clothing'
-    AND 
-    TO_CHAR(sale_date, 'YYYY-MM') = '2022-11'
-    AND
-    quantity >= 4
+This procedure:
+1. Inserts a new record into `return_status` with the current date
+2. Looks up the returned book's ISBN from `issued_status`
+3. Updates the book's `status` back to available in the `books` table
+4. Raises a confirmation notice with the book title
+
+---
+
+## 💡 Key Insights
+- Branch-wise reporting reveals which branches generate the highest rental revenue and issue the most books.
+- Overdue analysis (30-day threshold) flags members with pending returns — useful for automated reminder systems.
+- The stored procedure approach shows how the return process can be handled as a single transactional operation instead of manual multi-step updates.
+- Employee performance ranking highlights top processors of book issues, useful for staffing and incentive decisions.
+
+---
+
+## 🚀 How to Run
+1. Install PostgreSQL (or use any SQL-compatible database).
+2. Run `Liberary_Management_Table_prd.sql` first to create all tables and foreign key constraints.
+3. Import the CSV files into their respective tables:
+   ```sql
+   \copy branch FROM 'branch.csv' DELIMITER ',' CSV HEADER;
+   \copy employees FROM 'employees.csv' DELIMITER ',' CSV HEADER;
+   \copy books FROM 'books.csv' DELIMITER ',' CSV HEADER;
+   \copy members FROM 'members.csv' DELIMITER ',' CSV HEADER;
+   \copy issued_status FROM 'issued_status.csv' DELIMITER ',' CSV HEADER;
+   \copy return_status FROM 'return_status.csv' DELIMITER ',' CSV HEADER;
+   ```
+4. Run `Liberary_Management_Analysis_1.sql` section-by-section to reproduce all business task solutions.
+
+> ⚠️ Note: Load tables in this order — `branch` → `employees` → `books` → `members` → `issued_status` → `return_status` — to respect foreign key dependencies.
+
+---
+
+## 📁 Repository Structure
+```
+├── data/
+│   ├── books.csv
+│   ├── branch.csv
+│   ├── employees.csv
+│   ├── issued_status.csv
+│   ├── members.csv
+│   └── return_status.csv
+├── Liberary_Management_Table_prd.sql     # Schema + constraints
+├── Liberary_Management_Analysis_1.sql    # Business queries + procedure
+└── README.md                              # Project documentation
 ```
 
-3. **Write a SQL query to calculate the total sales (total_sale) for each category.**:
-```sql
-SELECT 
-    category,
-    SUM(total_sale) as net_sale,
-    COUNT(*) as total_orders
-FROM retail_sales
-GROUP BY 1
-```
+---
 
-4. **Write a SQL query to find the average age of customers who purchased items from the 'Beauty' category.**:
-```sql
-SELECT
-    ROUND(AVG(age), 2) as avg_age
-FROM retail_sales
-WHERE category = 'Beauty'
-```
+## 👤 Author
+**Shamsul Hoda**
+Data Analyst | SQL • Python • Power BI • Advanced Excel
+📧 shamsbusiness4632@gmail.com
+🔗 [LinkedIn](https://www.linkedin.com/in/shamsulhoda-s4632)
 
-5. **Write a SQL query to find all transactions where the total_sale is greater than 1000.**:
-```sql
-SELECT * FROM retail_sales
-WHERE total_sale > 1000
-```
+---
 
-6. **Write a SQL query to find the total number of transactions (transaction_id) made by each gender in each category.**:
-```sql
-SELECT 
-    category,
-    gender,
-    COUNT(*) as total_trans
-FROM retail_sales
-GROUP 
-    BY 
-    category,
-    gender
-ORDER BY 1
-```
-
-7. **Write a SQL query to calculate the average sale for each month. Find out best selling month in each year**:
-```sql
-SELECT 
-       year,
-       month,
-    avg_sale
-FROM 
-(    
-SELECT 
-    EXTRACT(YEAR FROM sale_date) as year,
-    EXTRACT(MONTH FROM sale_date) as month,
-    AVG(total_sale) as avg_sale,
-    RANK() OVER(PARTITION BY EXTRACT(YEAR FROM sale_date) ORDER BY AVG(total_sale) DESC) as rank
-FROM retail_sales
-GROUP BY 1, 2
-) as t1
-WHERE rank = 1
-```
-
-8. **Write a SQL query to find the top 5 customers based on the highest total sales **:
-```sql
-SELECT 
-    customer_id,
-    SUM(total_sale) as total_sales
-FROM retail_sales
-GROUP BY 1
-ORDER BY 2 DESC
-LIMIT 5
-```
-
-9. **Write a SQL query to find the number of unique customers who purchased items from each category.**:
-```sql
-SELECT 
-    category,    
-    COUNT(DISTINCT customer_id) as cnt_unique_cs
-FROM retail_sales
-GROUP BY category
-```
-
-10. **Write a SQL query to create each shift and number of orders (Example Morning <12, Afternoon Between 12 & 17, Evening >17)**:
-```sql
-WITH hourly_sale
-AS
-(
-SELECT *,
-    CASE
-        WHEN EXTRACT(HOUR FROM sale_time) < 12 THEN 'Morning'
-        WHEN EXTRACT(HOUR FROM sale_time) BETWEEN 12 AND 17 THEN 'Afternoon'
-        ELSE 'Evening'
-    END as shift
-FROM retail_sales
-)
-SELECT 
-    shift,
-    COUNT(*) as total_orders    
-FROM hourly_sale
-GROUP BY shift
-```
-
-## Findings
-
-- **Customer Demographics**: The dataset includes customers from various age groups, with sales distributed across different categories such as Clothing and Beauty.
-- **High-Value Transactions**: Several transactions had a total sale amount greater than 1000, indicating premium purchases.
-- **Sales Trends**: Monthly analysis shows variations in sales, helping identify peak seasons.
-- **Customer Insights**: The analysis identifies the top-spending customers and the most popular product categories.
-
-## Reports
-
-- **Sales Summary**: A detailed report summarizing total sales, customer demographics, and category performance.
-- **Trend Analysis**: Insights into sales trends across different months and shifts.
-- **Customer Insights**: Reports on top customers and unique customer counts per category.
-
-## Conclusion
-
-This project serves as a comprehensive introduction to SQL for data analysts, covering database setup, data cleaning, exploratory data analysis, and business-driven SQL queries. The findings from this project can help drive business decisions by understanding sales patterns, customer behavior, and product performance.
-
-## How to Use
-
-1. **Clone the Repository**: Clone this project repository from GitHub.
-2. **Set Up the Database**: Run the SQL scripts provided in the `database_setup.sql` file to create and populate the database.
-3. **Run the Queries**: Use the SQL queries provided in the `analysis_queries.sql` file to perform your analysis.
-4. **Explore and Modify**: Feel free to modify the queries to explore different aspects of the dataset or answer additional business questions.
-
-## Author - Zero Analyst
-
-This project is part of my portfolio, showcasing the SQL skills essential for data analyst roles. If you have any questions, feedback, or would like to collaborate, feel free to get in touch!
-
-### Stay Updated and Join the Community
-
-For more content on SQL, data analysis, and other data-related topics, make sure to follow me on social media and join our community:
-
-- **YouTube**: [Subscribe to my channel for tutorials and insights](https://www.youtube.com/@zero_analyst)
-- **Instagram**: [Follow me for daily tips and updates](https://www.instagram.com/zero_analyst/)
-- **LinkedIn**: [Connect with me professionally](https://www.linkedin.com/in/najirr)
-- **Discord**: [Join our community to learn and grow together](https://discord.gg/36h5f2Z5PK)
-
-Thank you for your support, and I look forward to connecting with you!
+⭐ If you found this project useful, consider giving it a star on GitHub!
