@@ -28,8 +28,8 @@ The project demonstrates end-to-end database management: designing normalized ta
 | `members.csv` | Library member records — ID, name, address, registration date |
 | `issued_status.csv` | Book issue transactions — who issued what, when, and by which employee |
 | `return_status.csv` | Book return transactions — linked to issued records |
-| `Liberary_Management_Table_prd.sql` | DDL script — table schema creation + foreign key constraints |
-| `Liberary_Management_Analysis_1.sql` | DML/DQL script — all 17 business task queries and procedures |
+| `Liberary_Management_Schema.sql` | DDL script — table schema creation + foreign key constraints |
+| `Liberary_Management_System_Solution.sql` | DML/DQL script — all 17 business task queries and procedures |
 
 ---
 
@@ -331,7 +331,7 @@ This procedure:
 
 ## 🚀 How to Run
 1. Install PostgreSQL (or use any SQL-compatible database).
-2. Run `Liberary_Management_Table_prd.sql` first to create all tables and foreign key constraints.
+2. Run `Liberary_Management_Schema.sql` first to create all tables and foreign key constraints.
 3. Import the CSV files into their respective tables:
    ```sql
    \copy branch FROM 'branch.csv' DELIMITER ',' CSV HEADER;
@@ -341,7 +341,7 @@ This procedure:
    \copy issued_status FROM 'issued_status.csv' DELIMITER ',' CSV HEADER;
    \copy return_status FROM 'return_status.csv' DELIMITER ',' CSV HEADER;
    ```
-4. Run `Liberary_Management_Analysis_1.sql` section-by-section to reproduce all business task solutions.
+4. Run `Liberary_Management_System_Solution.sql` section-by-section to reproduce all business task solutions.
 
 > ⚠️ Note: Load tables in this order — `branch` → `employees` → `books` → `members` → `issued_status` → `return_status` — to respect foreign key dependencies.
 
@@ -356,8 +356,8 @@ This procedure:
 │   ├── issued_status.csv
 │   ├── members.csv
 │   └── return_status.csv
-├── Liberary_Management_Table_prd.sql     # Schema + constraints
-├── Liberary_Management_Analysis_1.sql    # Business queries + procedure
+├── Liberary_Management_Schema.sql     # Schema + constraints
+├── Liberary_Management_System_Solution.sql    # Business queries + procedure
 └── README.md                              # Project documentation
 ```
 
