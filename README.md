@@ -366,8 +366,8 @@ This procedure:
 ## 👤 Author
 **Shamsul Hoda**
 Data Analyst | SQL • Python • Power BI • Advanced Excel
-📧 shamsbusiness4632@gmail.com
-🔗 [LinkedIn](https://www.linkedin.com/in/shamsulhoda-s4632)
+📧 Email : shamsbusiness4632@gmail.com
+🔗 Linkedin Profile : ![LinkedIn](https://www.linkedin.com/in/shamsulhoda-s4632)
 
 ---
 
