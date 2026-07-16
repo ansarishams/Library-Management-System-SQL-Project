@@ -367,7 +367,7 @@ This procedure:
 **Shamsul Hoda**
 Data Analyst | SQL • Python • Power BI • Advanced Excel
 📧 Email : shamsbusiness4632@gmail.com
-🔗 Linkedin Profile : ![LinkedIn](https://www.linkedin.com/in/shamsulhoda-s4632)
+🔗 Linkedin Profile : [LinkedIn](https://www.linkedin.com/in/shamsulhoda-s4632)
 
 ---
 
